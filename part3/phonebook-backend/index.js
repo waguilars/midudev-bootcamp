@@ -1,12 +1,20 @@
 const express = require('express');
+const morgan = require('morgan');
+
 const app = express();
 
 let db = require('./db.json');
 
 const port = 3001;
 
+morgan.token('body', (req) => {
+  return JSON.stringify(req.body);
+})
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 app.get('/api/persons', (req, res) => {
   return res.json(db);
@@ -37,7 +45,7 @@ app.post('/api/persons', (req, res) => {
   }
 
   const person = db.find(p => p.name.toLowerCase() === name.toLowerCase());
-  if (!person) {
+  if (person) {
     return res.status(400).json({
       error: 'the name must be unique'
     });
