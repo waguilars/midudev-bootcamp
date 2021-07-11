@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Filter from './Filter';
+import Notification from './Notification';
 import PersonForm from './PersonForm';
 import Persons from './Persons';
 import * as PersonsService from './services/persons';
@@ -9,6 +10,9 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [hideNotification, setHideNotification] = useState(true);
+  const [notificationType, setNotificationType] = useState('success');
 
   useEffect(() => {
     PersonsService.getAllPersons().then((persons) => setPersons(persons));
@@ -25,10 +29,17 @@ const App = () => {
       );
 
       if (confirm) {
-        const { id } = persons.find((p) => p.name === newPerson.name);
-        PersonsService.updatePerson({ id, ...newPerson }).then((data) =>
-          setPersons((prev) => prev.map((p) => (p.id === id ? data : p)))
-        );
+        const { id, name } = persons.find((p) => p.name === newPerson.name);
+        PersonsService.updatePerson({ id, ...newPerson })
+          .then((data) => {
+            const message = `${data.name}'s number updated.`;
+            sendNotification(message, 'success');
+            setPersons((prev) => prev.map((p) => (p.id === id ? data : p)));
+          })
+          .catch(() => {
+            const message = `Information of ${name} has been removed from server.`;
+            sendNotification(message, 'error');
+          });
       }
       return;
     }
@@ -37,17 +48,30 @@ const App = () => {
       return;
     }
 
-    PersonsService.createNewPerson(newPerson).then((data) =>
-      setPersons((prev) => [...prev, data])
-    );
+    PersonsService.createNewPerson(newPerson).then((data) => {
+      const message = `${data.name}'s number added.`;
+      sendNotification(message, 'success');
+      setPersons((prev) => [...prev, data]);
+    });
 
     setNewName('');
     setPhoneNumber('');
   };
 
+  const sendNotification = (message, type) => {
+    setNotificationType(type);
+    setNotificationMessage(message);
+    setHideNotification(false);
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={notificationMessage}
+        hidden={hideNotification}
+        type={notificationType}
+      />
       <Filter filter={filter} setFilter={setFilter} />
 
       <h2>Add a new</h2>
