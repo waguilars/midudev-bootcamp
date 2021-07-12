@@ -64,5 +64,5 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Server is runnning at http://localhost:${port}`)
+  console.log(`🔥 Server is runnning at http://localhost:${port}`)
 })
