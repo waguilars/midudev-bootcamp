@@ -40,6 +40,8 @@ const App = () => {
             const message = `Information of ${name} has been removed from server.`;
             sendNotification(message, 'error');
           });
+        setNewName('');
+        setPhoneNumber('');
       }
       return;
     }

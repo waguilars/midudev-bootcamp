@@ -10,6 +10,7 @@ const Contact = require('./models/contact')
 const app = express()
 
 const db = require('./db.json')
+const { notFoundError, generalError } = require('./middlewares/errorHandler')
 
 const port = process.env.PORT || 3001
 
@@ -20,37 +21,52 @@ morgan.token('body', (req) => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+)
 
 app.use(cors())
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (req, res, next) => {
   Contact.find({})
-    .then(resp => {
+    .then((resp) => {
       res.json(resp)
     })
+    .catch(next)
 })
 
-app.get('/info', (req, res) => {
-  const total = db.length
+app.get('/api/persons/:id', (req, res, next) => {
+  const { id } = req.params
+
+  Contact.findById(id)
+    .then((person) => {
+      res.json(person)
+    })
+    .catch(next)
+})
+
+app.get('/api/info', (req, res, next) => {
   const date = new Date()
-
-  res.send(`
-    <p>Phonebook has info for ${total} people.</p>
-    <p>${date}</p>
-  `)
+  Contact.countDocuments({}).then((total) => {
+    res.send(`
+      <p>Phonebook has info for ${total} people.</p>
+      <p>${date}</p>
+    `)
+  })
+    .catch(next)
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   const { id } = req.params
 
   Contact.findByIdAndRemove(id)
     .then(() => {
       res.sendStatus(204)
     })
+    .catch(next)
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const { name, number } = req.body
   if (!name || !number) {
     return res.status(400).json({
@@ -59,11 +75,32 @@ app.post('/api/persons', (req, res) => {
   }
 
   const contact = new Contact({ name, number })
-  contact.save()
-    .then(resp => {
+  contact
+    .save()
+    .then((resp) => {
       res.status(201).json(resp)
     })
+    .catch((err) => {
+      next(err)
+    })
 })
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const { id } = req.params
+  const { name, number } = req.body
+  if (!name || !number) {
+    return res.status(400).json({
+      error: 'Name or number is missing.'
+    })
+  }
+
+  Contact.findByIdAndUpdate(id, { number }, { new: true })
+    .then((resp) => res.json(resp))
+    .catch(next)
+})
+
+app.use(notFoundError)
+app.use(generalError)
 
 app.listen(port, () => {
   console.log(`🔥 Server is runnning at http://localhost:${port}`)
