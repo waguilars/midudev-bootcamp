@@ -1,0 +1,19 @@
+{
+  "name": "command-line-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mongo.js",
+  "scripts": {
+    "start": "node mongo",
+    "dev": "nodemon mongo"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^5.13.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
