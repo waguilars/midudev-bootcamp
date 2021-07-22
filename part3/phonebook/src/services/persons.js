@@ -3,9 +3,10 @@ import axios from 'axios';
 const url = 'http://localhost:3001/api/persons';
 
 export const createNewPerson = ({ name, number }) => {
-  return axios.post(url, { name, number }).then((resp) => {
-    return resp.data;
-  });
+  return axios.post(url, { name, number })
+    .then((resp) => {
+      return resp.data;
+    })
 };
 
 export const getAllPersons = () => {

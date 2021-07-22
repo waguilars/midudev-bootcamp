@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const path = require('path')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -9,7 +10,6 @@ const Contact = require('./models/contact')
 
 const app = express()
 
-const db = require('./db.json')
 const { notFoundError, generalError } = require('./middlewares/errorHandler')
 
 const port = process.env.PORT || 3001
@@ -26,6 +26,8 @@ app.use(
 )
 
 app.use(cors())
+
+app.use(express.static(path.resolve(__dirname, 'public')))
 
 app.get('/api/persons', (req, res, next) => {
   Contact.find({})
@@ -94,9 +96,13 @@ app.put('/api/persons/:id', (req, res, next) => {
     })
   }
 
-  Contact.findByIdAndUpdate(id, { number }, { new: true })
+  Contact.findByIdAndUpdate(id, { number }, { new: true, runValidators: true, context: 'query' })
     .then((resp) => res.json(resp))
     .catch(next)
+})
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public/index.html'))
 })
 
 app.use(notFoundError)

@@ -29,15 +29,16 @@ const App = () => {
       );
 
       if (confirm) {
-        const { id, name } = persons.find((p) => p.name === newPerson.name);
+        const { id } = persons.find((p) => p.name === newPerson.name);
         PersonsService.updatePerson({ id, ...newPerson })
           .then((data) => {
             const message = `${data.name}'s number updated.`;
             sendNotification(message, 'success');
             setPersons((prev) => prev.map((p) => (p.id === id ? data : p)));
           })
-          .catch(() => {
-            const message = `Information of ${name} has been removed from server.`;
+          .catch(err => {
+            // const message = `Information of ${name} has been removed from server.`;
+            const message = err.response.data.error
             sendNotification(message, 'error');
           });
         setNewName('');
@@ -50,11 +51,16 @@ const App = () => {
       return;
     }
 
-    PersonsService.createNewPerson(newPerson).then((data) => {
-      const message = `${data.name}'s number added.`;
-      sendNotification(message, 'success');
-      setPersons((prev) => [...prev, data]);
-    });
+    PersonsService.createNewPerson(newPerson)
+      .then((data) => {
+        const message = `${data.name}'s number added.`;
+        sendNotification(message, 'success');
+        setPersons((prev) => [...prev, data]);
+      })
+      .catch(err => {
+        const msg = err.response.data.error
+        sendNotification(msg, 'error')
+      });
 
     setNewName('');
     setPhoneNumber('');

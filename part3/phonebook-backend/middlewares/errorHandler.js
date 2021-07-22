@@ -11,5 +11,13 @@ module.exports.generalError = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   }
 
+  if (error.name === 'ValidationError') {
+    const errorNames = Object.keys(error.errors)
+    const errorData = error.errors[errorNames[0]]
+    return response.status(400).json({
+      error: errorData.message
+    })
+  }
+
   next(error)
 }
