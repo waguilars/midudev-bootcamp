@@ -1,10 +1,15 @@
+require('dotenv').config()
+
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 
+require('./db')
+const Contact = require('./models/contact')
+
 const app = express()
 
-let db = require('./db.json')
+const db = require('./db.json')
 
 const port = process.env.PORT || 3001
 
@@ -20,7 +25,10 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.use(cors())
 
 app.get('/api/persons', (req, res) => {
-  return res.json(db)
+  Contact.find({})
+    .then(resp => {
+      res.json(resp)
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -35,8 +43,11 @@ app.get('/info', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
   const { id } = req.params
-  db = db.filter((person) => person.id !== +id)
-  res.sendStatus(204)
+
+  Contact.findByIdAndRemove(id)
+    .then(() => {
+      res.sendStatus(204)
+    })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -47,20 +58,11 @@ app.post('/api/persons', (req, res) => {
     })
   }
 
-  const person = db.find(p => p.name.toLowerCase() === name.toLowerCase())
-  if (person) {
-    return res.status(400).json({
-      error: 'the name must be unique'
+  const contact = new Contact({ name, number })
+  contact.save()
+    .then(resp => {
+      res.status(201).json(resp)
     })
-  }
-
-  let id = Math.floor(Math.random() * 100000)
-  while (db.some((p) => p.id === id)) {
-    id = Math.floor(Math.random() * 100000)
-  }
-
-  db.push({ id, name, number })
-  res.status(201).json({ id, name, number })
 })
 
 app.listen(port, () => {
