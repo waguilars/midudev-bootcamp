@@ -1,6 +1,12 @@
 const mongoose = require('mongoose')
 
-const mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost/bloglist'
+let mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost'
+
+mongoUrl = process.env.NODE_ENV === 'test'
+  ? `${mongoUrl}/${process.env.TEST_DB_NAME}`
+  : `${mongoUrl}/${process.env.DB_NAME}`
+
+console.log(mongoUrl)
 
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
