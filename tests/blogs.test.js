@@ -46,16 +46,12 @@ describe('The route /api/blogs', () => {
       likes: 0
     }
 
-    await api.post('/api/blogs')
-      .send(newPost)
-      .expect(201)
+    await api.post('/api/blogs').send(newPost).expect(201)
     const content = await api.get('/api/blogs')
 
     expect(content.body).toHaveLength(initialPosts.length + 1)
     expect(content.body).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(newPost)
-      ])
+      expect.arrayContaining([expect.objectContaining(newPost)])
     )
   })
 
@@ -66,9 +62,7 @@ describe('The route /api/blogs', () => {
       url: 'https'
     }
 
-    const response = await api.post('/api/blogs')
-      .send(newPost)
-      .expect(201)
+    const response = await api.post('/api/blogs').send(newPost).expect(201)
 
     expect(response.body.likes).toBeDefined()
     expect(response.body.likes).toBe(0)
@@ -80,9 +74,15 @@ describe('The route /api/blogs', () => {
       likes: 0
     }
 
-    await api.post('/api/blogs')
-      .send(post)
-      .expect(400)
+    await api.post('/api/blogs').send(post).expect(400)
+  })
+
+  it('an HTTP DELETE must delete a the blog post', async () => {
+    const { _id } = await Blog.findOne({}).sort({ _id: -1 }).limit(1)
+    await api.delete(`/api/blogs/${_id}`).expect(204)
+    const { body } = await api.get('/api/blogs')
+
+    expect(body).toHaveLength(initialPosts.length - 1)
   })
 })
 

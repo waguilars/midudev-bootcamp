@@ -25,4 +25,19 @@ app.post('/api/blogs', async (request, response) => {
   const result = await blog.save()
   response.status(201).json(result)
 })
+
+app.delete('/api/blogs/:id', async (req, res) => {
+  const { id } = req.params
+  await Blog.findByIdAndDelete(id)
+  res.status(204).send()
+})
+
+app.put('/api/blogs/:id', async (req, res) => {
+  const { id } = req.params
+  const { body } = req
+
+  await Blog.findByIdAndUpdate(id, body)
+  res.status(204).send()
+})
+
 module.exports = app
