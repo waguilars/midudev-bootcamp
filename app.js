@@ -3,7 +3,12 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 
-const Blog = require('./models/Blog')
+const usersRouter = require('./controllers/users')
+const { serverError } = require('./middlewares/errorHandler')
+const { error404 } = require('./middlewares/error404')
+const blogRouter = require('./controllers/blogs')
+const loginRouter = require('./controllers/login')
+const tokenExtractor = require('./middlewares/tokenExtractor')
 
 const app = express()
 require('./config/db')
@@ -11,33 +16,14 @@ require('./config/db')
 app.use(cors())
 app.use(express.json())
 
-app.get('/api/blogs', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs)
-})
+app.use(tokenExtractor)
 
-app.post('/api/blogs', async (request, response) => {
-  const { likes = 0, title, url } = request.body
-  if (!title || !url) return response.status(400).send()
+app.use('/api/blogs', blogRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
-  const blog = new Blog({ ...request.body, likes })
+app.use(error404)
 
-  const result = await blog.save()
-  response.status(201).json(result)
-})
-
-app.delete('/api/blogs/:id', async (req, res) => {
-  const { id } = req.params
-  await Blog.findByIdAndDelete(id)
-  res.status(204).send()
-})
-
-app.put('/api/blogs/:id', async (req, res) => {
-  const { id } = req.params
-  const { body } = req
-
-  await Blog.findByIdAndUpdate(id, body)
-  res.status(204).send()
-})
+app.use(serverError)
 
 module.exports = app
