@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import authService from './services/auth';
-import * as  blogService from './services/blogs';
+import * as blogService from './services/blogs';
+import Notification from './Notification';
 
 const initialBlogForm = {
   title: '',
   author: '',
   url: '',
-}
+};
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,6 +16,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [blog, setBlog] = useState(initialBlogForm);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -28,16 +30,25 @@ const App = () => {
     }
   }, []);
 
-
   const handleLogin = (e) => {
     e.preventDefault();
     const credentials = { username, password };
 
-    authService.login(credentials).then((user) => {
-      setUser(user);
-      const parsedUser = JSON.stringify(user);
-      localStorage.setItem('user', parsedUser);
-    });
+    authService
+      .login(credentials)
+      .then((user) => {
+        setUser(user);
+        const parsedUser = JSON.stringify(user);
+        localStorage.setItem('user', parsedUser);
+        setNotification(null);
+      })
+      .catch((err) => {
+        const { error } = err.response.data;
+        setNotification({
+          type: 'error',
+          message: error,
+        });
+      });
   };
 
   const handleLogout = (e) => {
@@ -46,27 +57,38 @@ const App = () => {
     setUser(null);
   };
 
-  const handleBlogInput = e => {
-    const { value, name } = e.target
-    setBlog(prev => ({
+  const handleBlogInput = (e) => {
+    const { value, name } = e.target;
+    setBlog((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
-  const handleNewNote = e => {
-    e.preventDefault()
-    blogService.createNew(blog, user.token)
-      .then(resp => {
-        const {user, ...newBlog} = resp
-        setBlog(initialBlogForm)
-        setBlogs(blogs => blogs.concat(newBlog))
+  const handleNewNote = (e) => {
+    e.preventDefault();
+    blogService.createNew(blog, user.token).then((resp) => {
+      const { user, ...newBlog } = resp;
+      setBlog(initialBlogForm);
+      setBlogs((blogs) => blogs.concat(newBlog));
+      setNotification({
+        message: `a new blog ${newBlog.title} by ${newBlog.author}`
       })
-  }
+      setTimeout(() => {
+        setNotification(null)
+      }, 3000);
+    });
+  };
 
   if (!user) {
     return (
       <div>
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+          />
+        )}
         <h2>Log in to Aplication</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -93,6 +115,12 @@ const App = () => {
 
   return (
     <div>
+      {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+          />
+        )}
       <h2>blogs</h2>
       <p>
         {user.name} logged in
