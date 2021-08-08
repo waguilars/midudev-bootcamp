@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 const initialBlogForm = {
   title: '',
   author: '',
   url: '',
-};
+}
 
 const NoteForm = (props) => {
-  const { createNewBlog } = props;
+  const { createNewBlog } = props
 
-  const [blog, setBlog] = useState(initialBlogForm);
+  const [blog, setBlog] = useState(initialBlogForm)
 
   const handleBlogInput = (e) => {
-    const { value, name } = e.target;
+    const { value, name } = e.target
     setBlog((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const addNewBlog = (e) => {
-    e.preventDefault();
-    createNewBlog(blog);
+    e.preventDefault()
+    createNewBlog(blog)
 
-    setBlog(initialBlogForm);
-  };
+    setBlog(initialBlogForm)
+  }
 
   return (
     <div>
@@ -60,7 +60,7 @@ const NoteForm = (props) => {
         <button>create</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default NoteForm;
+export default NoteForm

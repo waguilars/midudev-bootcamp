@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const Togglable = (props) => {
@@ -7,14 +7,14 @@ const Togglable = (props) => {
     buttonLabel = 'show',
     cancelButtonLabel = 'hide',
     visibleStatus = false,
-  } = props;
+  } = props
 
-  const [visible, setVisible] = useState(visibleStatus);
+  const [visible, setVisible] = useState(visibleStatus)
 
-  const showOnVisible = { display: visible ? '' : 'none' };
-  const hideOnVisible = { display: visible ? 'none' : '' };
+  const showOnVisible = { display: visible ? '' : 'none' }
+  const hideOnVisible = { display: visible ? 'none' : '' }
 
-  const changeVisible = () => setVisible((prev) => !prev);
+  const changeVisible = () => setVisible((prev) => !prev)
 
   return (
     <div>
@@ -27,8 +27,8 @@ const Togglable = (props) => {
         <button onClick={changeVisible}>{cancelButtonLabel}</button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 Togglable.propTypes = {
   buttonLabel: PropTypes.string,
@@ -36,4 +36,4 @@ Togglable.propTypes = {
   visibleStatus:  PropTypes.bool,
 }
 
-export default Togglable;
+export default Togglable

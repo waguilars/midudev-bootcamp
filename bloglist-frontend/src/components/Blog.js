@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import * as blogService from '../services/blogs';
+import React, { useState } from 'react'
+import * as blogService from '../services/blogs'
 
 const Blog = ({ blog, setBlogs, authUser }) => {
   const blogStyle = {
@@ -8,36 +8,36 @@ const Blog = ({ blog, setBlogs, authUser }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
 
   const removeButtonStyle = {
     backgroundColor: '#547EF5',
     borderRadius: '5px',
-  };
+  }
 
-  const [fullView, setFullView] = useState(false);
+  const [fullView, setFullView] = useState(false)
 
   const makeLike = () => {
-    const { likes, id } = blog;
+    const { likes, id } = blog
     blogService.updateBlog({ id, likes: likes + 1 }).then(() => {
       setBlogs((blogs) => {
-        const blogToUpdate = blogs.find((blog) => blog.id === id);
-        blogToUpdate.likes = likes + 1;
-        return [...blogs];
-      });
-    });
-  };
+        const blogToUpdate = blogs.find((blog) => blog.id === id)
+        blogToUpdate.likes = likes + 1
+        return [...blogs]
+      })
+    })
+  }
 
   const removeBlog = () => {
     const canRemove = window.confirm(
       `Remove blog ${blog.title} by ${blog.author}`
-    );
+    )
     if (canRemove) {
       blogService.deleteBlog(blog.id).then(() => {
-        setBlogs((blogs) => blogs.filter((b) => b.id !== blog.id));
-      });
+        setBlogs((blogs) => blogs.filter((b) => b.id !== blog.id))
+      })
     }
-  };
+  }
 
   return (
     <div style={blogStyle}>
@@ -63,7 +63,7 @@ const Blog = ({ blog, setBlogs, authUser }) => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog

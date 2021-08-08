@@ -1,83 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import Blog from './components/Blog';
-import authService from './services/auth';
-import * as blogService from './services/blogs';
-import Notification from './components/Notification';
-import Togglable from './components/Togglable';
-import NoteForm from './components/NoteForm';
+import React, { useState, useEffect } from 'react'
+import Blog from './components/Blog'
+import authService from './services/auth'
+import * as blogService from './services/blogs'
+import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import NoteForm from './components/NoteForm'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [notification, setNotification] = useState(null);
+  const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    blogService.getAll().then((blogs) => setBlogs(blogs))
+  }, [])
 
   useEffect(() => {
-    const userStorage = localStorage.getItem('user');
+    const userStorage = localStorage.getItem('user')
     if (userStorage) {
-      const userData = JSON.parse(userStorage);
-      setUser(userData);
+      const userData = JSON.parse(userStorage)
+      setUser(userData)
       blogService.setToken(userData.token)
     }
-  }, []);
+  }, [])
 
   const handleLogin = (e) => {
-    e.preventDefault();
-    const credentials = { username, password };
+    e.preventDefault()
+    const credentials = { username, password }
 
     authService
       .login(credentials)
       .then((user) => {
-        setUser(user);
-        const parsedUser = JSON.stringify(user);
-        localStorage.setItem('user', parsedUser);
+        setUser(user)
+        const parsedUser = JSON.stringify(user)
+        localStorage.setItem('user', parsedUser)
         blogService.setToken(user.token)
-        setNotification(null);
+        setNotification(null)
       })
       .catch((err) => {
-        const { error } = err.response.data;
+        const { error } = err.response.data
         setNotification({
           type: 'error',
           message: error,
-        });
-      });
-  };
+        })
+      })
+  }
 
   const handleLogout = (e) => {
-    e.preventDefault();
-    localStorage.removeItem('user');
-    setUser(null);
-  };
+    e.preventDefault()
+    localStorage.removeItem('user')
+    setUser(null)
+  }
 
   const createBlog = (blog) => {
     blogService
       .createNew(blog)
       .then((resp) => {
-        const { user, ...newBlog } = resp;
+        const { user, ...newBlog } = resp
         delete user.blogs
-        setBlogs((blogs) => blogs.concat({user, ...newBlog}));
+        setBlogs((blogs) => blogs.concat({ user, ...newBlog }))
         setNotification({
           message: `a new blog ${newBlog.title} by ${newBlog.author}`,
-        });
+        })
       })
       .catch((err) => {
-        const { error } = err.response.data;
+        const { error } = err.response.data
         setNotification({
           type: 'error',
           message: error,
-        });
+        })
       })
       .finally(() => {
         setTimeout(() => {
-          setNotification(null);
-        }, 3000);
-      });
-  };
+          setNotification(null)
+        }, 3000)
+      })
+  }
 
   if (!user) {
     return (
@@ -109,7 +109,7 @@ const App = () => {
           <button>login</button>
         </form>
       </div>
-    );
+    )
   }
 
   return (
@@ -132,7 +132,7 @@ const App = () => {
           <Blog key={blog.id} blog={blog} setBlogs={setBlogs} authUser={user} />
         ))}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
