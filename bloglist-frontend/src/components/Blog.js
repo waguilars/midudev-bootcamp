@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import * as blogService from '../services/blogs'
+import * as blogService from '../services/blogs';
 
-const Blog = ({ blog, setBlogs }) => {
+const Blog = ({ blog, setBlogs, authUser }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,24 +10,39 @@ const Blog = ({ blog, setBlogs }) => {
     marginBottom: 5,
   };
 
+  const removeButtonStyle = {
+    backgroundColor: '#547EF5',
+    borderRadius: '5px',
+  };
+
   const [fullView, setFullView] = useState(false);
 
   const makeLike = () => {
-    const { likes, id } = blog
-    blogService.updateBlog( {id, likes: likes + 1} )
-      .then(resp => {
-        setBlogs(blogs => {
-          const blogToUpdate = blogs.find(blog => blog.id === id )
-          blogToUpdate.likes = likes + 1
-          return [...blogs]
-        })
-      })
-  }
+    const { likes, id } = blog;
+    blogService.updateBlog({ id, likes: likes + 1 }).then(() => {
+      setBlogs((blogs) => {
+        const blogToUpdate = blogs.find((blog) => blog.id === id);
+        blogToUpdate.likes = likes + 1;
+        return [...blogs];
+      });
+    });
+  };
+
+  const removeBlog = () => {
+    const canRemove = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`
+    );
+    if (canRemove) {
+      blogService.deleteBlog(blog.id).then(() => {
+        setBlogs((blogs) => blogs.filter((b) => b.id !== blog.id));
+      });
+    }
+  };
 
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title}
+        {blog.title} {blog.author}
         <button onClick={() => setFullView((prev) => !prev)}>
           {fullView ? 'hide' : 'show'}
         </button>
@@ -39,9 +54,12 @@ const Blog = ({ blog, setBlogs }) => {
             likes {blog.likes}
             <button onClick={makeLike}>like</button>
           </div>
-          <div>
-            {blog.author}
-          </div>
+          <div>{blog.user.name}</div>
+          {authUser.username === blog.user.username && (
+            <button style={removeButtonStyle} onClick={removeBlog}>
+              remove
+            </button>
+          )}
         </>
       )}
     </div>

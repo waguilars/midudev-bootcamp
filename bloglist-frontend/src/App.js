@@ -22,6 +22,7 @@ const App = () => {
     if (userStorage) {
       const userData = JSON.parse(userStorage);
       setUser(userData);
+      blogService.setToken(userData.token)
     }
   }, []);
 
@@ -35,6 +36,7 @@ const App = () => {
         setUser(user);
         const parsedUser = JSON.stringify(user);
         localStorage.setItem('user', parsedUser);
+        blogService.setToken(user.token)
         setNotification(null);
       })
       .catch((err) => {
@@ -53,16 +55,28 @@ const App = () => {
   };
 
   const createBlog = (blog) => {
-    blogService.createNew(blog, user.token).then((resp) => {
-      const { user, ...newBlog } = resp;
-      setBlogs((blogs) => blogs.concat(newBlog));
-      setNotification({
-        message: `a new blog ${newBlog.title} by ${newBlog.author}`,
+    blogService
+      .createNew(blog)
+      .then((resp) => {
+        const { user, ...newBlog } = resp;
+        delete user.blogs
+        setBlogs((blogs) => blogs.concat({user, ...newBlog}));
+        setNotification({
+          message: `a new blog ${newBlog.title} by ${newBlog.author}`,
+        });
+      })
+      .catch((err) => {
+        const { error } = err.response.data;
+        setNotification({
+          type: 'error',
+          message: error,
+        });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
       });
-      setTimeout(() => {
-        setNotification(null);
-      }, 3000);
-    });
   };
 
   if (!user) {
@@ -113,10 +127,10 @@ const App = () => {
         <NoteForm createNewBlog={createBlog} />
       </Togglable>
       {blogs
-        .sort((a, b) => b.likes - a.likes )
+        .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
-      ))}
+          <Blog key={blog.id} blog={blog} setBlogs={setBlogs} authUser={user} />
+        ))}
     </div>
   );
 };
