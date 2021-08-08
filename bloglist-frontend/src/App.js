@@ -4,19 +4,14 @@ import authService from './services/auth';
 import * as blogService from './services/blogs';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import NoteForm from './components/NoteForm';
 
-const initialBlogForm = {
-  title: '',
-  author: '',
-  url: '',
-};
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [blog, setBlog] = useState(initialBlogForm);
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
@@ -58,19 +53,9 @@ const App = () => {
     setUser(null);
   };
 
-  const handleBlogInput = (e) => {
-    const { value, name } = e.target;
-    setBlog((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleNewNote = (e) => {
-    e.preventDefault();
+  const createBlog = blog => {
     blogService.createNew(blog, user.token).then((resp) => {
       const { user, ...newBlog } = resp;
-      setBlog(initialBlogForm);
       setBlogs((blogs) => blogs.concat(newBlog));
       setNotification({
         message: `a new blog ${newBlog.title} by ${newBlog.author}`
@@ -80,6 +65,7 @@ const App = () => {
       }, 3000);
     });
   };
+
 
   if (!user) {
     return (
@@ -128,38 +114,8 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
 
-      <Togglable>
-        <h2>create new</h2>
-        <form onSubmit={handleNewNote}>
-        <div>
-          <label>title</label>
-          <input
-            type="text"
-            name="title"
-            value={blog.title}
-            onChange={handleBlogInput}
-          />
-        </div>
-        <div>
-          <label>author</label>
-          <input
-            type="text"
-            name="author"
-            value={blog.author}
-            onChange={handleBlogInput}
-          />
-        </div>
-        <div>
-          <label>url</label>
-          <input
-            type="text"
-            name="url"
-            value={blog.url}
-            onChange={handleBlogInput}
-          />
-        </div>
-        <button>create</button>
-      </form>
+      <Togglable buttonLabel="create new blog">
+        <NoteForm createNewBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
