@@ -118,7 +118,7 @@ const App = () => {
         <NoteForm createNewBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} setBlogs={setBlogs}/>
       ))}
     </div>
   );

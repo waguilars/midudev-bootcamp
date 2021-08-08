@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import * as blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, setBlogs }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,6 +11,18 @@ const Blog = ({ blog }) => {
   };
 
   const [fullView, setFullView] = useState(false);
+
+  const makeLike = () => {
+    const { likes, id } = blog
+    blogService.updateBlog( {id, likes: likes + 1} )
+      .then(resp => {
+        setBlogs(blogs => {
+          const blogToUpdate = blogs.find(blog => blog.id === id )
+          blogToUpdate.likes = likes + 1
+          return [...blogs]
+        })
+      })
+  }
 
   return (
     <div style={blogStyle}>
@@ -24,7 +37,7 @@ const Blog = ({ blog }) => {
           <div>{blog.url}</div>
           <div>
             likes {blog.likes}
-            <button>like</button>
+            <button onClick={makeLike}>like</button>
           </div>
           <div>
             {blog.author}
