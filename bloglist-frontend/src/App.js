@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import authService from './services/auth';
 import * as blogService from './services/blogs';
-import Notification from './Notification';
+import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 
 const initialBlogForm = {
   title: '',
@@ -127,8 +128,9 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
 
-      <h2>create new</h2>
-      <form onSubmit={handleNewNote}>
+      <Togglable>
+        <h2>create new</h2>
+        <form onSubmit={handleNewNote}>
         <div>
           <label>title</label>
           <input
@@ -158,7 +160,7 @@ const App = () => {
         </div>
         <button>create</button>
       </form>
-
+      </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
