@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'
 
 const Togglable = (props) => {
   const {
@@ -28,5 +29,11 @@ const Togglable = (props) => {
     </div>
   );
 };
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string,
+  cancelButtonLabel:  PropTypes.string,
+  visibleStatus:  PropTypes.bool,
+}
 
 export default Togglable;
