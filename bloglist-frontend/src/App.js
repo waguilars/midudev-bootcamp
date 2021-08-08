@@ -6,7 +6,6 @@ import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import NoteForm from './components/NoteForm';
 
-
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
@@ -53,19 +52,18 @@ const App = () => {
     setUser(null);
   };
 
-  const createBlog = blog => {
+  const createBlog = (blog) => {
     blogService.createNew(blog, user.token).then((resp) => {
       const { user, ...newBlog } = resp;
       setBlogs((blogs) => blogs.concat(newBlog));
       setNotification({
-        message: `a new blog ${newBlog.title} by ${newBlog.author}`
-      })
+        message: `a new blog ${newBlog.title} by ${newBlog.author}`,
+      });
       setTimeout(() => {
-        setNotification(null)
+        setNotification(null);
       }, 3000);
     });
   };
-
 
   if (!user) {
     return (
@@ -103,11 +101,8 @@ const App = () => {
   return (
     <div>
       {notification && (
-          <Notification
-            message={notification.message}
-            type={notification.type}
-          />
-        )}
+        <Notification message={notification.message} type={notification.type} />
+      )}
       <h2>blogs</h2>
       <p>
         {user.name} logged in
@@ -117,8 +112,10 @@ const App = () => {
       <Togglable buttonLabel="create new blog">
         <NoteForm createNewBlog={createBlog} />
       </Togglable>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} setBlogs={setBlogs}/>
+      {blogs
+        .sort((a, b) => b.likes - a.likes )
+        .map((blog) => (
+        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
       ))}
     </div>
   );
