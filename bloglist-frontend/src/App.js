@@ -4,7 +4,7 @@ import authService from './services/auth'
 import * as blogService from './services/blogs'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import NoteForm from './components/NoteForm'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -124,7 +124,7 @@ const App = () => {
       </p>
 
       <Togglable buttonLabel="create new blog">
-        <NoteForm createNewBlog={createBlog} />
+        <BlogForm createNewBlog={createBlog} />
       </Togglable>
       {blogs
         .sort((a, b) => b.likes - a.likes)

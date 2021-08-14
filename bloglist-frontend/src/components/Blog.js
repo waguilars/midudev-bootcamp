@@ -19,13 +19,15 @@ const Blog = ({ blog, setBlogs, authUser }) => {
 
   const makeLike = () => {
     const { likes, id } = blog
-    blogService.updateBlog({ id, likes: likes + 1 }).then(() => {
-      setBlogs((blogs) => {
-        const blogToUpdate = blogs.find((blog) => blog.id === id)
-        blogToUpdate.likes = likes + 1
-        return [...blogs]
+    blogService.updateBlog({ id, likes: likes + 1 })
+      .then(() => {
+        setBlogs((blogs) => {
+          const blogToUpdate = blogs.find((blog) => blog.id === id)
+          blogToUpdate.likes = likes + 1
+          return [...blogs]
+        })
       })
-    })
+      .catch(e => console.error(e.message))
   }
 
   const removeBlog = () => {

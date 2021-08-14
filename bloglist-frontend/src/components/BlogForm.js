@@ -6,7 +6,7 @@ const initialBlogForm = {
   url: '',
 }
 
-const NoteForm = (props) => {
+const BlogForm = (props) => {
   const { createNewBlog } = props
 
   const [blog, setBlog] = useState(initialBlogForm)
@@ -63,4 +63,4 @@ const NoteForm = (props) => {
   )
 }
 
-export default NoteForm
+export default BlogForm
