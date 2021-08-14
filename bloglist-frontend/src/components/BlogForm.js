@@ -34,6 +34,7 @@ const BlogForm = (props) => {
           <label>title</label>
           <input
             type="text"
+            id="title"
             name="title"
             value={blog.title}
             onChange={handleBlogInput}
@@ -43,6 +44,7 @@ const BlogForm = (props) => {
           <label>author</label>
           <input
             type="text"
+            id="author"
             name="author"
             value={blog.author}
             onChange={handleBlogInput}
@@ -52,6 +54,7 @@ const BlogForm = (props) => {
           <label>url</label>
           <input
             type="text"
+            id="url"
             name="url"
             value={blog.url}
             onChange={handleBlogInput}
