@@ -89,11 +89,13 @@ const App = () => {
           />
         )}
         <h2>Log in to Aplication</h2>
-        <form onSubmit={handleLogin}>
+        <form id="login-form" onSubmit={handleLogin}>
           <div>
             <label>username</label>
             <input
               type="text"
+              name="username"
+              placeholder="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -102,6 +104,8 @@ const App = () => {
             <label>password</label>
             <input
               type="password"
+              name="password"
+              placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
