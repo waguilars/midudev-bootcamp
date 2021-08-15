@@ -33,6 +33,8 @@ describe('Blog app', function () {
   })
 
   describe('When logged in', function() {
+    const blog = { title: 'Will Testing', author: 'An Author', url: 'http://...' }
+
     beforeEach(function() {
       cy.request('POST', 'http://localhost:3003/api/login', user)
         .then(resp => {
@@ -43,20 +45,25 @@ describe('Blog app', function () {
 
     it('A blog can be created', function() {
       cy.contains('new blog').click()
-      cy.get('#note-form').as('noteForm')
 
-      const blog = { title: 'Will Testing', author: 'An Author', url: 'http://...' }
-
-      cy.get('[name="title"]').type(blog.title)
-      cy.get('[name="author"]').type(blog.author)
-      cy.get('[name="url"]').type(blog.url)
-
-      cy.get('@noteForm').submit()
+      cy.addBlog(blog)
 
       cy.get('[data-test-id="blogs-list"]').contains(blog.author)
       cy.get('[data-test-id="blogs-list"]').contains(blog.title)
 
       cy.get('[data-test-id="notification"]').should('have.css', 'color','rgb(0, 128, 0)')
+    })
+
+    it('On a blog can click the like button', () => {
+      cy.contains('new blog').click()
+
+      cy.addBlog(blog)
+      cy.contains('show').click()
+
+      const likes = 0
+      cy.contains('like').click()
+      cy.contains(likes + 1)
+
     })
   })
 })

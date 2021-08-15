@@ -23,3 +23,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('addBlog', ({ title, author, url }) => {
+  cy.get('#note-form').as('noteForm')
+
+  cy.get('[name="title"]').type(title)
+  cy.get('[name="author"]').type(author)
+  cy.get('[name="url"]').type(url)
+
+  cy.get('@noteForm').submit()
+})
