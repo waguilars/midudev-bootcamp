@@ -29,7 +29,7 @@ const BlogForm = (props) => {
   return (
     <div>
       <h2>create new</h2>
-      <form onSubmit={addNewBlog}>
+      <form id="note-form" onSubmit={addNewBlog}>
         <div>
           <label>title</label>
           <input

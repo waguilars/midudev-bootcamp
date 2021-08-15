@@ -10,7 +10,7 @@ const Notification = ({ message, type = 'success' }) => {
     padding: 5
   }
   return (
-    <div style={style}>
+    <div data-test-id="notification" style={style}>
       <h2>{message}</h2>
     </div>
   )
