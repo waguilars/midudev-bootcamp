@@ -5,6 +5,33 @@ import reducer from './reducer';
 
 const store = createStore(reducer);
 
+const Statistics = () => {
+  const good = store.getState().good;
+  const neutral = store.getState().ok;
+  const bad = store.getState().bad;
+  const all = good + neutral + bad
+  const average = ((good - bad) / all).toFixed(2)
+  const positive = (good / all) * 100
+  return (
+    <>
+      <h1>Statistics</h1>
+      {!good && !neutral && !bad ? (
+        <p>no feedback given</p>
+      ) : (
+        <>
+          <div>good {good}</div>
+          <div>neutral {neutral}</div>
+          <div>bad {bad}</div>
+          <div>all {all}</div>
+          <div>average {average}</div>
+          <div>positive {positive}%</div>
+          
+        </>
+      )}
+    </>
+  );
+};
+
 const App = () => {
   const good = () => {
     store.dispatch({
@@ -24,15 +51,18 @@ const App = () => {
     });
   };
 
+  const reset = () => {
+    store.dispatch({ type: 'ZERO' });
+  };
+
   return (
     <div>
+      <h1>Give Feedback</h1>
       <button onClick={good}>good</button>
       <button onClick={neutral}>neutral</button>
       <button onClick={bad}>bad</button>
-      <button>reset stats</button>
-      <div>good {store.getState().good}</div>
-      <div>neutral {store.getState().ok}</div>
-      <div>bad {store.getState().bad}</div>
+      <button onClick={reset}>reset stats</button>
+      <Statistics />
     </div>
   );
 };

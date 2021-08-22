@@ -9,7 +9,7 @@ describe('unicafe reducer', () => {
   };
 
   test('should return a proper initial state when called with undefined state', () => {
-    const state = {};
+    // const state = {};
     const action = {
       type: 'DO_NOTHING',
     };
@@ -56,4 +56,20 @@ describe('unicafe reducer', () => {
       bad: 1
     })
   });
+
+  test('reset stats reset the state', () => {
+    const action = { type: 'ZERO' }
+    const ok = { type: 'OK' }
+    const bad = { type: 'BAD' }
+    const good = { type: 'GOOD' }
+    let newState = counterReducer(initialState, ok)
+    newState = counterReducer(newState, bad)
+    newState = counterReducer(newState, good)
+    expect(newState).toEqual({
+      ok: 1, good: 1, bad: 1
+    })
+
+    newState = counterReducer(newState, action)
+    expect(newState).toEqual(initialState)
+  })
 });
