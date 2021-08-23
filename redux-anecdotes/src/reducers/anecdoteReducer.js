@@ -20,9 +20,11 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject);
 
 const reducer = (state = initialState, action) => {
-  const { type, id } = action;
+  const { type} = action;
+
   switch (type) {
     case 'VOTE':
+      const { id } = action;
       const newState = state.map((anecdote) => {
         if (anecdote.id === id) {
           return { ...anecdote, votes: anecdote.votes + 1 };
@@ -31,6 +33,12 @@ const reducer = (state = initialState, action) => {
       });
 
       return newState;
+
+    case 'NEW_ANECDOTE':
+      const { content } = action;
+      const anecdote = asObject(content);
+      return state.concat(anecdote);
+
     default:
       return state;
   }
