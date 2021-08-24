@@ -9,9 +9,9 @@ const Notification = () => {
     padding: 10,
     borderWidth: 1
   }
-  return (
+  return notification.hidden ? null : (
     <div style={style}>
-      {notification}
+      {notification.message}
     </div>
   )
 }
