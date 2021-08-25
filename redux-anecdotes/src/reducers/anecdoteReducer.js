@@ -7,12 +7,11 @@
 //   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
 // ];
 
-const getId = () => (100000 * Math.random()).toFixed(0);
+// const getId = () => (100000 * Math.random()).toFixed(0);
 
-const asObject = (anecdote) => {
+export const asObject = (anecdote) => {
   return {
     content: anecdote,
-    id: getId(),
     votes: 0,
   };
 };
@@ -35,9 +34,8 @@ const reducer = (state = [], action) => {
       return newState;
 
     case '@ANECDOTE/NEW_ANECDOTE':
-      const { content } = action;
-      const anecdote = asObject(content);
-      return state.concat(anecdote);
+      const { data } = action;
+      return state.concat(data);
 
     case '@ANECDOTE/INIT':
       return action.data;
@@ -54,10 +52,10 @@ export const addVote = (id) => {
   };
 };
 
-export const createNewAnecdote = (content) => {
+export const createNewAnecdote = (anecdote) => {
   return {
     type: '@ANECDOTE/NEW_ANECDOTE',
-    content,
+    data: anecdote,
   };
 };
 
