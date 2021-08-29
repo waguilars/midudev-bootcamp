@@ -1,35 +1,34 @@
 const initialState = {
   message: "render here notification...",
-  hidden: true,
+  hidden: true
 }
 
 const notificationReducer = (state = initialState, { type, payload }) => {
   switch (type) {
 
     case '@NOTIFICATION/SET_MESSAGE':
-      return { message: payload, hidden: false }
+      return payload
 
-    case '@NOTIFICATION/REMOVE_MESSAGE':
-      return initialState
+    case '@NOTIFICATION/CLEAR':
+      return initialState;
 
     default:
       return state
   }
 }
 
-export const showNotification = (message) => {
-  return {
-    type: '@NOTIFICATION/SET_MESSAGE',
-    payload: message
+export const showNotification = (message, time) => {
+  const seconds = time * 1000;
+  return async dispatch => {
+    dispatch({
+      type: '@NOTIFICATION/SET_MESSAGE',
+      payload: { message, hidden: false }
+    })
+
+    setTimeout(() => dispatch({
+      type: '@NOTIFICATION/CLEAR',
+    }), seconds)
   }
 }
-
-export const hideNotification = () => {
-  return {
-    type: '@NOTIFICATION/REMOVE_MESSAGE',
-    payload: null
-  }
-}
-
 
 export default notificationReducer;
