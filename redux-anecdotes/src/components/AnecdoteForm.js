@@ -14,10 +14,7 @@ const AnecdoteForm = () => {
       return;
     }
 
-    anecdotesService.createNew(asObject(content))
-      .then(newAnecdote => {
-        dispatch(createNewAnecdote(newAnecdote));
-      })
+    dispatch(createNewAnecdote(content));
     evt.target.anecdote.value = '';
   };
 

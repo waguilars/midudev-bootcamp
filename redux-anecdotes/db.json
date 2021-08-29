@@ -49,6 +49,11 @@
       "content": "dasd",
       "votes": 0,
       "id": "0UbNCC6"
+    },
+    {
+      "content": "New anecdote with redux-thunk",
+      "votes": 0,
+      "id": "flQJjFD"
     }
   ]
 }
