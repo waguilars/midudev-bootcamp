@@ -17,10 +17,10 @@ const reducer = (state = [], action) => {
 
   switch (type) {
     case '@ANECDOTE/VOTE':
-      const { id } = action;
+      const { id } = action.data;
       const newState = state.map((anecdote) => {
         if (anecdote.id === id) {
-          return { ...anecdote, votes: anecdote.votes + 1 };
+          return  action.data;
         }
         return anecdote;
       });
@@ -39,13 +39,6 @@ const reducer = (state = [], action) => {
   }
 };
 
-export const addVote = (id) => {
-  return {
-    id,
-    type: '@ANECDOTE/VOTE',
-  };
-};
-
 export const createNewAnecdote = (content) => {
   return async dispatch => {
     const anecdote = anecdotesService.createNew(asObject(content))
@@ -62,6 +55,19 @@ export const initializeAnecdotes = () => {
     dispatch({
       type: '@ANECDOTE/INIT',
       data: anecdotes
+    })
+  }
+}
+
+export const voteFor = (anecdote) => {
+  return async dispatch => {
+    const updatedAnecdote = await anecdotesService.update({
+      ...anecdote,
+      votes: anecdote.votes + 1
+    })
+    dispatch({
+      type: '@ANECDOTE/VOTE',
+      data: updatedAnecdote
     })
   }
 }
