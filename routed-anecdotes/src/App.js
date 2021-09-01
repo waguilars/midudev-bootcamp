@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 
 import About from './components/About';
+import AnecdoteDetail from './components/AnecdoteDetail';
 import AnecdoteList from './components/AnecdoteList';
 import CreateNew from './components/CreateNew';
 import Footer from './components/Footer';
@@ -52,6 +53,9 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <AnecdoteList anecdotes={anecdotes} />
+        </Route>
+        <Route path='/anecdotes/:id'>
+          <AnecdoteDetail anecdotes={anecdotes} />
         </Route>
         <Route path='/about'>
           <About />
