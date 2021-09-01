@@ -7,6 +7,7 @@ import AnecdoteList from './components/AnecdoteList';
 import CreateNew from './components/CreateNew';
 import Footer from './components/Footer';
 import Menu from './components/Menu';
+import Notification from './components/Notification';
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -26,11 +27,16 @@ const App = () => {
     },
   ]);
 
-  const [notification, setNotification] = useState('');
+  const [notification, setNotification] = useState(null);
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
+
+    setNotification(`a new anecdote ${anecdote.content} created!`);
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -50,6 +56,7 @@ const App = () => {
     <BrowserRouter>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
       <Switch>
         <Route exact path='/'>
           <AnecdoteList anecdotes={anecdotes} />
