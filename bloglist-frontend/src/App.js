@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Blog from './components/Blog'
-import * as blogService from './services/blogs'
 
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -8,33 +7,25 @@ import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNewBlog, initializeBlogs } from './reducers/blogReducer'
 import LoginForm from './components/LoginForm'
+import { removeAuth, retrieveSession } from './reducers/authReducer'
 
 const App = () => {
   const dispatch = useDispatch()
+
   const blogs = useSelector(state => state.blog)
   const notification = useSelector(state => state.notification)
-
-  const [user, setUser] = useState(null)
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(retrieveSession())
   }, [])
-
-  useEffect(() => {
-    const userStorage = localStorage.getItem('user')
-    if (userStorage) {
-      const userData = JSON.parse(userStorage)
-      setUser(userData)
-      blogService.setToken(userData.token)
-    }
-  }, [])
-
 
 
   const handleLogout = (e) => {
     e.preventDefault()
-    localStorage.removeItem('user')
-    setUser(null)
+    dispatch(removeAuth())
+
   }
 
   const createBlog = (blog) => {
@@ -51,7 +42,7 @@ const App = () => {
           />
         )}
         <h2>Log in to Aplication</h2>
-        <LoginForm setUser={setUser} />
+        <LoginForm />
       </div>
     )
   }

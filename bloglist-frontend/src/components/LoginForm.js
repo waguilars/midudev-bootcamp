@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { login } from '../reducers/authReducer'
 
-import authService from '../services/auth'
-import * as blogService from '../services/blogs'
-import { showError } from '../reducers/notificationReducer'
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -15,18 +13,7 @@ const LoginForm = ({ setUser }) => {
     e.preventDefault()
     const credentials = { username, password }
 
-    authService
-      .login(credentials)
-      .then((user) => {
-        setUser(user)
-        const parsedUser = JSON.stringify(user)
-        localStorage.setItem('user', parsedUser)
-        blogService.setToken(user.token)
-      })
-      .catch((err) => {
-        const { error } = err.response.data
-        dispatch(showError(error))
-      })
+    dispatch(login(credentials))
   }
 
 
