@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import * as blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, setBlogs, authUser }) => {
+const Blog = ({ blog, authUser }) => {
+  const dispatch = useDispatch()
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,16 +21,8 @@ const Blog = ({ blog, setBlogs, authUser }) => {
   const [fullView, setFullView] = useState(false)
 
   const makeLike = () => {
-    const { likes, id } = blog
-    blogService.updateBlog({ id, likes: likes + 1 })
-      .then(() => {
-        setBlogs((blogs) => {
-          const blogToUpdate = blogs.find((blog) => blog.id === id)
-          blogToUpdate.likes = likes + 1
-          return [...blogs]
-        })
-      })
-      .catch(e => console.error(e.message))
+    const { id } = blog
+    dispatch(likeBlog(id))
   }
 
   const removeBlog = () => {
@@ -35,9 +30,7 @@ const Blog = ({ blog, setBlogs, authUser }) => {
       `Remove blog ${blog.title} by ${blog.author}`
     )
     if (canRemove) {
-      blogService.deleteBlog(blog.id).then(() => {
-        setBlogs((blogs) => blogs.filter((b) => b.id !== blog.id))
-      })
+      dispatch(deleteBlog(blog.id))
     }
   }
 
